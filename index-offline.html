@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Sinhala SRT Generator - Offline Version</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 Sinhala SRT Generator</h1>
+            <p>Upload any video and get Sinhala subtitles! (Offline Version)</p>
+            <div class="status-indicator" id="statusIndicator">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Checking server...</span>
+            </div>
+        </div>
+        
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-content">
+                <div class="upload-icon">
+                    📹
+                </div>
+                <div class="upload-text">
+                    <h3>Drag & drop your video here</h3>
+                    <p>or <span class="browse-link" id="browseLink">browse files</span></p>
+                    <p class="supported-formats">Supports: MP4, AVI, MOV, MKV (No size limit!)</p>
+                    <p class="offline-notice">✨ Works completely offline - No API keys needed!</p>
+                </div>
+            </div>
+            <input type="file" id="fileInput" accept=".mp4,.avi,.mov,.mkv,.webm" style="display: none;">
+        </div>
+        
+        <div class="processing-area" id="processingArea" style="display: none;">
+            <div class="processing-content">
+                <div class="loader"></div>
+                <h3>Processing your video...</h3>
+                <p id="processingStatus">Uploading video to local server...</p>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-info">
+                        <span id="progressPercentage">0%</span>
+                        <span id="processingTime">00:00</span>
+                    </div>
+                </div>
+                <div class="stage-indicator" id="stageIndicator">
+                    <div class="stage active" id="stage1">
+                        <div class="stage-number">1</div>
+                        <div class="stage-label">Audio Extraction</div>
+                    </div>
+                    <div class="stage" id="stage2">
+                        <div class="stage-number">2</div>
+                        <div class="stage-label">Local Transcription</div>
+                    </div>
+                    <div class="stage" id="stage3">
+                        <div class="stage-number">3</div>
+                        <div class="stage-label">Translation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="results-area" id="resultsArea" style="display: none;">
+            <h3>✅ Subtitles Generated Successfully!</h3>
+            <div class="results-info" id="resultsInfo">
+                <p><strong>Processing completed in:</strong> <span id="totalTime">--</span></p>
+                <p><strong>Total segments:</strong> <span id="totalSegments">--</span></p>
+                <p><strong>Video duration:</strong> <span id="videoDuration">--</span></p>
+            </div>
+            <div class="download-buttons">
+                <button class="download-btn english" id="downloadEnglish">
+                    📄 Download English SRT
+                </button>
+                <button class="download-btn sinhala" id="downloadSinhala">
+                    📄 Download Sinhala SRT
+                </button>
+            </div>
+            <div class="process-another">
+                <button class="process-btn" id="processAnother">
+                    🔄 Process Another Video
+                </button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Sinhala subtitle generation | Powered by faster-whisper  | R.A.Isuru Deshal  Contact +94767794217 | inboxtoisuru@gmail.com</p>
+        </div>
+    </div>
+    
+    <script src="offline-script.js"></script>
+</body>
+</html>

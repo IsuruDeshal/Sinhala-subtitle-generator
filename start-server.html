@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Server Setup Guide</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #667eea; }
+        h2 { color: #555; margin-top: 30px; }
+        .method {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+        code {
+            background: #e1e5fe;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        .command {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Sinhala SRT Generator - Server Setup</h1>
+        
+        <div class="note">
+            <strong>Why do I need a local server?</strong><br>
+            Some browsers block certain features (like FFmpeg.wasm) when opening HTML files directly. 
+            Running a local server resolves these security restrictions.
+        </div>
+
+        <h2>Method 1: Python (Recommended)</h2>
+        <div class="method">
+            <p><strong>If you have Python installed:</strong></p>
+            <p>1. Open Command Prompt or PowerShell</p>
+            <p>2. Navigate to your project folder:</p>
+            <div class="command">cd "C:\Users\admin\Desktop\project\srt1"</div>
+            <p>3. Start the server:</p>
+            <div class="command">python -m http.server 8000</div>
+            <p>4. Open your browser and go to: <code>http://localhost:8000</code></p>
+        </div>
+
+        <h2>Method 2: Node.js</h2>
+        <div class="method">
+            <p><strong>If you have Node.js installed:</strong></p>
+            <p>1. Open Command Prompt or PowerShell</p>
+            <p>2. Navigate to your project folder:</p>
+            <div class="command">cd "C:\Users\admin\Desktop\project\srt1"</div>
+            <p>3. Install http-server (one-time setup):</p>
+            <div class="command">npm install -g http-server</div>
+            <p>4. Start the server:</p>
+            <div class="command">http-server -p 8000</div>
+            <p>5. Open your browser and go to: <code>http://localhost:8000</code></p>
+        </div>
+
+        <h2>Method 3: PHP</h2>
+        <div class="method">
+            <p><strong>If you have PHP installed:</strong></p>
+            <p>1. Open Command Prompt or PowerShell</p>
+            <p>2. Navigate to your project folder:</p>
+            <div class="command">cd "C:\Users\admin\Desktop\project\srt1"</div>
+            <p>3. Start the server:</p>
+            <div class="command">php -S localhost:8000</div>
+            <p>4. Open your browser and go to: <code>http://localhost:8000</code></p>
+        </div>
+
+        <h2>Method 4: Live Server (VS Code)</h2>
+        <div class="method">
+            <p><strong>If you're using VS Code:</strong></p>
+            <p>1. Install the "Live Server" extension</p>
+            <p>2. Right-click on <code>index.html</code></p>
+            <p>3. Select "Open with Live Server"</p>
+            <p>4. Your browser will open automatically</p>
+        </div>
+
+        <div class="success">
+            <strong>✅ Success!</strong><br>
+            Once your server is running, your Sinhala SRT Generator should work properly with full FFmpeg support!
+        </div>
+
+        <h2>Alternative: Direct File Access</h2>
+        <div class="method">
+            <p><strong>If you can't run a server:</strong></p>
+            <p>The app now includes fallback mode that works without FFmpeg. It will:</p>
+            <ul>
+                <li>Send video files directly to OpenAI Whisper (which can handle video)</li>
+                <li>Show demo results if APIs are unavailable</li>
+                <li>Still generate downloadable SRT files</li>
+            </ul>
+            <p>Just open <code>index.html</code> directly in your browser!</p>
+        </div>
+
+        <div class="note">
+            <strong>🔧 Troubleshooting:</strong><br>
+            • Make sure your internet connection is stable<br>
+            • Clear browser cache if you're seeing old errors<br>
+            • Try a different browser (Chrome or Firefox recommended)<br>
+            • Check browser console (F12) for detailed error messages
+        </div>
+    </div>
+</body>
+</html>

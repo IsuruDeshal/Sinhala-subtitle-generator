@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+           <div class="footer">
+            <p>Sinhala subtitle generation | Powered by OpenAI Whisper & GPT-4 | R.A.Isuru Deshal Contact +94767794217 | inboxtoisuru@gmail.com</p>
+        </div>eta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Sinhala SRT Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.7/dist/umd/ffmpeg.js"></script>
+    <script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/index.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 Sinhala SRT Generator</h1>
+            <p>Upload any video and get Sinhala subtitles!</p>
+        </div>
+        
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-content">
+                <div class="upload-icon">
+                    📹
+                </div>
+                <div class="upload-text">
+                    <h3>Drag & drop your video here</h3>
+                    <p>or <span class="browse-link" id="browseLink">browse files</span></p>
+                    <p class="supported-formats">Supports: MP4, AVI, MOV, MKV (Max: 5GB)</p>
+                </div>
+            </div>
+            <input type="file" id="fileInput" accept=".mp4,.avi,.mov,.mkv" style="display: none;">
+        </div>
+        
+        <div class="processing-area" id="processingArea" style="display: none;">
+            <div class="processing-content">
+                <div class="loader"></div>
+                <h3>Processing your video...</h3>
+                <p id="processingStatus">Initializing FFmpeg...</p>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-info">
+                        <span id="progressPercentage">0%</span>
+                        <span id="processingTime">00:00</span>
+                    </div>
+                </div>
+                <div class="stage-indicator" id="stageIndicator">
+                    <div class="stage active" id="stage1">
+                        <div class="stage-number">1</div>
+                        <div class="stage-label">Audio Extraction</div>
+                    </div>
+                    <div class="stage" id="stage2">
+                        <div class="stage-number">2</div>
+                        <div class="stage-label">Transcription</div>
+                    </div>
+                    <div class="stage" id="stage3">
+                        <div class="stage-number">3</div>
+                        <div class="stage-label">Translation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="results-area" id="resultsArea" style="display: none;">
+            <h3>✅ Subtitles Generated Successfully!</h3>
+            <div class="download-buttons">
+                <button class="download-btn english" id="downloadEnglish">
+                    📄 Download English SRT
+                </button>
+                <button class="download-btn sinhala" id="downloadSinhala">
+                    📄 Download Sinhala SRT
+                </button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Made with isuru  ||  Sinhala subtitle generation</p>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
