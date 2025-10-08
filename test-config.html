@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Configuration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .success {
+            background: #48bb78;
+            color: white;
+        }
+        .error {
+            background: #f56565;
+            color: white;
+        }
+        .warning {
+            background: #ed8936;
+            color: white;
+        }
+        code {
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 API Configuration Test</h1>
+    
+    <div class="test-card">
+        <h2>Configuration File Status</h2>
+        <p id="configStatus">Loading...</p>
+    </div>
+    
+    <div class="test-card">
+        <h2>API Keys Status</h2>
+        <div id="keysStatus">Loading...</div>
+    </div>
+    
+    <div class="test-card">
+        <h2>Auto-Fill Test</h2>
+        <p>Select a provider to test auto-fill:</p>
+        <select id="testProvider" style="padding: 10px; margin: 10px 0; width: 100%;">
+            <option value="openai">OpenAI</option>
+            <option value="gemini">Google Gemini</option>
+            <option value="speechmatics">Speechmatics</option>
+            <option value="libretranslate">LibreTranslate</option>
+        </select>
+        <div id="autoFillResult"></div>
+    </div>
+
+    <script src="api-config.js"></script>
+    <script>
+        // Test 1: Check if API_CONFIG is loaded
+        const configStatus = document.getElementById('configStatus');
+        if (typeof API_CONFIG !== 'undefined') {
+            configStatus.innerHTML = '<span class="status success">✅ Loaded</span> API configuration file found and loaded successfully!';
+        } else {
+            configStatus.innerHTML = '<span class="status error">❌ Failed</span> API configuration file not found or failed to load.';
+        }
+
+        // Test 2: Check API keys
+        const keysStatus = document.getElementById('keysStatus');
+        let keysHTML = '';
+        
+        if (typeof API_CONFIG !== 'undefined') {
+            // OpenAI
+            const openaiKey = API_CONFIG.openai.apiKey;
+            if (openaiKey && openaiKey !== 'YOUR_OPENAI_API_KEY_HERE' && openaiKey !== '') {
+                keysHTML += `<p>OpenAI: <span class="status success">✅ Configured</span> <code>${openaiKey.substring(0, 10)}...${openaiKey.substring(openaiKey.length - 4)}</code></p>`;
+            } else {
+                keysHTML += `<p>OpenAI: <span class="status warning">⚠️ Not Set</span> (Optional)</p>`;
+            }
+            
+            // Gemini
+            const geminiKey = API_CONFIG.gemini.apiKey;
+            if (geminiKey && geminiKey !== 'YOUR_GEMINI_API_KEY_HERE' && geminiKey !== '') {
+                keysHTML += `<p>Gemini: <span class="status success">✅ Configured</span> <code>${geminiKey.substring(0, 10)}...${geminiKey.substring(geminiKey.length - 4)}</code></p>`;
+            } else {
+                keysHTML += `<p>Gemini: <span class="status error">❌ Not Set</span></p>`;
+            }
+            
+            // Speechmatics
+            const speechKey = API_CONFIG.speechmatics.apiKey;
+            if (speechKey && speechKey !== 'YOUR_SPEECHMATICS_API_KEY_HERE' && speechKey !== '') {
+                keysHTML += `<p>Speechmatics: <span class="status success">✅ Configured</span> <code>${speechKey.substring(0, 10)}...${speechKey.substring(speechKey.length - 4)}</code></p>`;
+            } else {
+                keysHTML += `<p>Speechmatics: <span class="status error">❌ Not Set</span></p>`;
+            }
+            
+            // LibreTranslate
+            const libreServer = API_CONFIG.libretranslate.server;
+            keysHTML += `<p>LibreTranslate: <span class="status success">✅ Configured</span> Server: <code>${libreServer}</code></p>`;
+        }
+        
+        keysStatus.innerHTML = keysHTML;
+
+        // Test 3: Auto-fill simulation
+        const testProvider = document.getElementById('testProvider');
+        const autoFillResult = document.getElementById('autoFillResult');
+        
+        testProvider.addEventListener('change', function() {
+            const provider = this.value;
+            let result = '';
+            let key = '';
+            
+            switch(provider) {
+                case 'openai':
+                    key = API_CONFIG.openai.apiKey;
+                    break;
+                case 'gemini':
+                    key = API_CONFIG.gemini.apiKey;
+                    break;
+                case 'speechmatics':
+                    key = API_CONFIG.speechmatics.apiKey;
+                    break;
+                case 'libretranslate':
+                    key = 'No key needed';
+                    break;
+            }
+            
+            if (key && key !== '' && !key.includes('YOUR_')) {
+                result = `<p><span class="status success">✅ Success</span> Auto-fill would work! Key: <code>${key.substring(0, 15)}...</code></p>`;
+            } else if (provider === 'libretranslate') {
+                result = `<p><span class="status success">✅ Success</span> LibreTranslate doesn't need an API key!</p>`;
+            } else {
+                result = `<p><span class="status warning">⚠️ Warning</span> No key configured for ${provider}. Auto-fill won't work.</p>`;
+            }
+            
+            autoFillResult.innerHTML = result;
+        });
+        
+        // Trigger initial test
+        testProvider.dispatchEvent(new Event('change'));
+    </script>
+</body>
+</html>
