@@ -1,0 +1,56 @@
+# Git Ignore File for Sinhala SRT Generator
+
+# API Configuration (contains sensitive keys)
+api-config.js
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+temp/
+tmp/
+
+# Node modules (if any)
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Audio/Video test files
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.mp3
+*.wav
+test_videos/
+sample_videos/
