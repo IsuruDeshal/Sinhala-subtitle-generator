@@ -181,6 +181,12 @@ class SinhalaSTTGenerator {
     handleFileSelect(file) {
         if (!file) return;
 
+        // Get current API key from input field (in case it was auto-filled)
+        const apiKeyInput = document.getElementById('apiKey');
+        if (apiKeyInput && apiKeyInput.value.trim()) {
+            this.apiKey = apiKeyInput.value.trim();
+        }
+
         // Validate API key (except for LibreTranslate which doesn't need one)
         if (this.apiProvider !== 'libretranslate' && !this.apiKey) {
             alert('Please enter your API key first!');
