@@ -2,6 +2,7 @@ class SinhalaSTTGenerator {
     constructor() {
         this.apiKey = '';
         this.apiProvider = 'openai'; // Default provider
+        this.libretranslateServer = 'https://libretranslate.com';
         this.englishTranscript = '';
         this.sinhalaTranscript = '';
         this.ffmpeg = null;
@@ -74,12 +75,36 @@ class SinhalaSTTGenerator {
         const browseLink = document.getElementById('browseLink');
         const apiProviderSelect = document.getElementById('apiProvider');
         const apiKeyInput = document.getElementById('apiKey');
+        const libretranslateServerSelect = document.getElementById('libretranslateServer');
+        const customServerUrlInput = document.getElementById('customServerUrl');
 
         // API provider change event
         apiProviderSelect.addEventListener('change', (e) => {
             this.apiProvider = e.target.value;
             this.updateApiKeyPlaceholder();
+            this.toggleLibreTranslateOptions();
         });
+
+        // LibreTranslate server change event
+        if (libretranslateServerSelect) {
+            libretranslateServerSelect.addEventListener('change', (e) => {
+                const customUrlField = document.getElementById('customServerUrl');
+                if (e.target.value === 'custom') {
+                    customUrlField.style.display = 'block';
+                    this.libretranslateServer = '';
+                } else {
+                    customUrlField.style.display = 'none';
+                    this.libretranslateServer = e.target.value;
+                }
+            });
+        }
+
+        // Custom server URL input
+        if (customServerUrlInput) {
+            customServerUrlInput.addEventListener('input', (e) => {
+                this.libretranslateServer = e.target.value.trim();
+            });
+        }
 
         // API key input event
         apiKeyInput.addEventListener('input', (e) => {
@@ -127,12 +152,28 @@ class SinhalaSTTGenerator {
         });
     }
 
+    toggleLibreTranslateOptions() {
+        const libretranslateOptions = document.getElementById('libretranslateOptions');
+        const apiKeyInput = document.getElementById('apiKey');
+        
+        if (this.apiProvider === 'libretranslate') {
+            libretranslateOptions.style.display = 'block';
+            apiKeyInput.style.display = 'none';
+            apiKeyInput.required = false;
+        } else {
+            libretranslateOptions.style.display = 'none';
+            apiKeyInput.style.display = 'block';
+            apiKeyInput.required = true;
+        }
+    }
+
     updateApiKeyPlaceholder() {
         const apiKeyInput = document.getElementById('apiKey');
         const placeholders = {
             'openai': 'Enter your OpenAI API key (sk-...)',
             'gemini': 'Enter your Google Gemini API key (AIza...)',
-            'speechmatics': 'Enter your Speechmatics API key (RT1a...)'
+            'speechmatics': 'Enter your Speechmatics API key (RT1a...)',
+            'libretranslate': 'No API key required for LibreTranslate'
         };
         apiKeyInput.placeholder = placeholders[this.apiProvider];
     }
@@ -140,9 +181,15 @@ class SinhalaSTTGenerator {
     handleFileSelect(file) {
         if (!file) return;
 
-        // Validate API key
-        if (!this.apiKey) {
+        // Validate API key (except for LibreTranslate which doesn't need one)
+        if (this.apiProvider !== 'libretranslate' && !this.apiKey) {
             alert('Please enter your API key first!');
+            return;
+        }
+
+        // Validate LibreTranslate server
+        if (this.apiProvider === 'libretranslate' && !this.libretranslateServer) {
+            alert('Please select or enter a LibreTranslate server URL!');
             return;
         }
 
@@ -354,6 +401,8 @@ class SinhalaSTTGenerator {
                 return await this.transcribeWithGemini(audioBlob);
             case 'speechmatics':
                 return await this.transcribeWithSpeechmatics(audioBlob);
+            case 'libretranslate':
+                return await this.transcribeWithOpenAI(audioBlob); // LibreTranslate only does translation, use OpenAI for transcription
             default:
                 throw new Error('Invalid API provider selected');
         }
@@ -580,6 +629,8 @@ class SinhalaSTTGenerator {
                 return await this.translateWithGemini(segments);
             case 'speechmatics':
                 return await this.translateWithGemini(segments); // Speechmatics doesn't have translation, use Gemini
+            case 'libretranslate':
+                return await this.translateWithLibreTranslate(segments);
             default:
                 throw new Error('Invalid API provider selected');
         }
@@ -690,6 +741,74 @@ class SinhalaSTTGenerator {
 
         } catch (error) {
             console.error('Gemini translation error:', error);
+            return segments.map(segment => ({
+                text: this.getDemoSinhalaText(segment.text),
+                start: segment.start,
+                end: segment.end
+            }));
+        }
+    }
+
+    async translateWithLibreTranslate(segments) {
+        try {
+            const textToTranslate = segments.map(segment => segment.text).join(' ');
+            
+            this.updateProcessingStatus('Sending text to LibreTranslate for translation...');
+            this.updateProgress(80);
+            
+            // First, detect the language (optional but recommended)
+            const detectResponse = await fetch(`${this.libretranslateServer}/detect`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    q: textToTranslate
+                })
+            });
+
+            let sourceLang = 'en';
+            if (detectResponse.ok) {
+                const detectData = await detectResponse.json();
+                sourceLang = detectData[0]?.language || 'en';
+            }
+
+            // Translate the text
+            const response = await fetch(`${this.libretranslateServer}/translate`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    q: textToTranslate,
+                    source: sourceLang,
+                    target: 'si', // Sinhala language code
+                    format: 'text'
+                })
+            });
+
+            this.updateProgress(90);
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(`LibreTranslate failed: ${response.statusText} - ${errorData.error || 'Unknown error'}`);
+            }
+
+            const data = await response.json();
+            const translatedText = data.translatedText || textToTranslate;
+            
+            // Split the translated text back into segments with original timing
+            const translatedSegments = this.splitTranslatedText(translatedText, segments);
+            return translatedSegments;
+
+        } catch (error) {
+            console.error('LibreTranslate translation error:', error);
+            
+            // Check if it's a server connection issue
+            if (error.message.includes('Failed to fetch')) {
+                console.warn('LibreTranslate server not accessible. Please check the server URL.');
+            }
+            
             return segments.map(segment => ({
                 text: this.getDemoSinhalaText(segment.text),
                 start: segment.start,

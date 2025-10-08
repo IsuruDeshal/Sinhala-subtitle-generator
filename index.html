@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
            <div class="footer">
-            <p>Sinhala Subtitle Generator | Powered by OpenAI, Gemini & Speechmatics | R.A.Isuru Deshal | Contact: +94767794217 | inboxtoisuru@gmail.com</p>
+            <p>Sinhala Subtitle Generator | Powered by OpenAI, Gemini, Speechmatics & LibreTranslate | R.A.Isuru Deshal | Contact: +94767794217 | inboxtoisuru@gmail.com</p>
         </div>eta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎬 Sinhala SRT Generator</title>
     <link rel="stylesheet" href="styles.css">
@@ -23,8 +23,20 @@
                 <option value="openai">OpenAI (Whisper & GPT-4)</option>
                 <option value="gemini">Google Gemini 2.5</option>
                 <option value="speechmatics">Speechmatics</option>
+                <option value="libretranslate">LibreTranslate (Free & Open Source)</option>
             </select>
             <input type="text" id="apiKey" class="api-key-input" placeholder="Enter your API key here">
+            
+            <div id="libretranslateOptions" style="display: none; margin-top: 15px;">
+                <label for="libretranslateServer">LibreTranslate Server:</label>
+                <select id="libretranslateServer" class="api-select">
+                    <option value="https://libretranslate.com">Official Server (libretranslate.com)</option>
+                    <option value="https://translate.argosopentech.com">Argos Translate</option>
+                    <option value="https://translate.terraprint.co">Terraprint</option>
+                    <option value="custom">Custom Server URL</option>
+                </select>
+                <input type="text" id="customServerUrl" class="api-key-input" placeholder="Enter custom server URL" style="display: none; margin-top: 10px;">
+            </div>
         </div>
         
         <div class="upload-area" id="uploadArea">
