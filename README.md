@@ -1,6 +1,6 @@
 # 🎬 Sinhala SRT Generator
 
-**Upload any video and get Sinhala subtitles instantly!**
+**Upload any video and get Sinhala subtitles instantly with your choice of AI provider!**
 
 [![Made with Love](https://img.shields.io/badge/Made%20with-❤️-red.svg)](https://github.com/IsuruDeshal/Sinhala-subtitle-generator)
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
@@ -8,21 +8,42 @@
 
 ## ✨ Features
 
+- **🤖 Multiple AI Providers**: Choose between OpenAI, Google Gemini, or Speechmatics
 - **🌐 Two Versions Available**: Online (API-based) and Offline (Local processing)
 - **🎯 Dual Language Output**: Generates subtitles in both English and Sinhala
 - **📹 Multiple Formats**: Supports MP4, AVI, MOV, MKV, WebM
 - **🚀 Real-time Progress**: Beautiful progress tracking with time estimates
-- **💰 Cost Options**: Free offline version or paid online version
+- **💰 Flexible Options**: Choose the AI provider that fits your budget
 - **🔒 Privacy**: Choose between cloud processing or local processing
+
+## 🤖 Supported AI Providers
+
+### OpenAI (Whisper & GPT-4)
+- ✅ High accuracy transcription
+- ✅ Excellent translation quality
+- ✅ Well-established API
+- 💰 Pay-per-use pricing
+
+### Google Gemini 2.5
+- ✅ Fast processing
+- ✅ Competitive pricing
+- ✅ Latest AI technology
+- 💰 Free tier available
+
+### Speechmatics
+- ✅ Real-time transcription
+- ✅ Enterprise-grade accuracy
+- ✅ Multi-language support
+- 💰 Subscription-based pricing
 
 ## 🌟 Two Versions to Choose From
 
 ### 🌐 Online Version (`index.html`)
 - **✅ Quick Setup**: Just open and use
 - **✅ No Installation**: Works directly in browser
-- **✅ Cloud Processing**: Uses OpenAI Whisper & GPT-4
-- **❌ API Key Required**: Need OpenAI API key
-- **❌ Per-use Cost**: Charges per transcription
+- **✅ Multi-Provider Support**: Use OpenAI, Gemini, or Speechmatics
+- **✅ Flexible Costs**: Choose provider based on budget
+- **❌ API Key Required**: Need API key from your chosen provider
 
 ### 🏠 Offline Version (`index-offline.html`)
 - **✅ Completely Free**: No API costs after setup
@@ -35,8 +56,14 @@
 
 ### Online Version (Instant Use)
 1. Open `index.html` in your browser
-2. Add your OpenAI API key to `script.js` (line 3)
-3. Upload video and get subtitles!
+2. Select your AI provider (OpenAI, Gemini, or Speechmatics)
+3. Enter your API key for the selected provider
+4. Upload video and get subtitles!
+
+**Getting API Keys:**
+- **OpenAI**: Get your key from [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+- **Google Gemini**: Get your key from [ai.google.dev](https://ai.google.dev/)
+- **Speechmatics**: Get your key from [portal.speechmatics.com](https://portal.speechmatics.com/)
 
 ### Offline Version (One-time Setup)
 1. **Install Python 3.8+** from [python.org](https://python.org)
