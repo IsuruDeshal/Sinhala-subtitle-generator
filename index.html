@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
            <div class="footer">
-            <p>Sinhala subtitle generation | Powered by OpenAI Whisper & GPT-4 | R.A.Isuru Deshal Contact +94767794217 | inboxtoisuru@gmail.com</p>
+            <p>Sinhala Subtitle Generator | Powered by OpenAI, Gemini & Speechmatics | R.A.Isuru Deshal | Contact: +94767794217 | inboxtoisuru@gmail.com</p>
         </div>eta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎬 Sinhala SRT Generator</title>
     <link rel="stylesheet" href="styles.css">
@@ -15,6 +15,16 @@
         <div class="header">
             <h1>🎬 Sinhala SRT Generator</h1>
             <p>Upload any video and get Sinhala subtitles!</p>
+        </div>
+        
+        <div class="api-selector">
+            <label for="apiProvider">Select AI Provider:</label>
+            <select id="apiProvider" class="api-select">
+                <option value="openai">OpenAI (Whisper & GPT-4)</option>
+                <option value="gemini">Google Gemini 2.5</option>
+                <option value="speechmatics">Speechmatics</option>
+            </select>
+            <input type="text" id="apiKey" class="api-key-input" placeholder="Enter your API key here">
         </div>
         
         <div class="upload-area" id="uploadArea">

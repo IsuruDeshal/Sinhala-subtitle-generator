@@ -1,6 +1,7 @@
 class SinhalaSTTGenerator {
     constructor() {
-        this.apiKey = 'YOUR_OPENAI_API_KEY_HERE'; // Replace with your OpenAI API key
+        this.apiKey = '';
+        this.apiProvider = 'openai'; // Default provider
         this.englishTranscript = '';
         this.sinhalaTranscript = '';
         this.ffmpeg = null;
@@ -71,6 +72,19 @@ class SinhalaSTTGenerator {
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
         const browseLink = document.getElementById('browseLink');
+        const apiProviderSelect = document.getElementById('apiProvider');
+        const apiKeyInput = document.getElementById('apiKey');
+
+        // API provider change event
+        apiProviderSelect.addEventListener('change', (e) => {
+            this.apiProvider = e.target.value;
+            this.updateApiKeyPlaceholder();
+        });
+
+        // API key input event
+        apiKeyInput.addEventListener('input', (e) => {
+            this.apiKey = e.target.value.trim();
+        });
 
         // File input change event
         fileInput.addEventListener('change', (e) => {
@@ -113,8 +127,24 @@ class SinhalaSTTGenerator {
         });
     }
 
+    updateApiKeyPlaceholder() {
+        const apiKeyInput = document.getElementById('apiKey');
+        const placeholders = {
+            'openai': 'Enter your OpenAI API key (sk-...)',
+            'gemini': 'Enter your Google Gemini API key (AIza...)',
+            'speechmatics': 'Enter your Speechmatics API key (RT1a...)'
+        };
+        apiKeyInput.placeholder = placeholders[this.apiProvider];
+    }
+
     handleFileSelect(file) {
         if (!file) return;
+
+        // Validate API key
+        if (!this.apiKey) {
+            alert('Please enter your API key first!');
+            return;
+        }
 
         // Validate file type
         const allowedTypes = ['video/mp4', 'video/avi', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska'];
@@ -317,6 +347,19 @@ class SinhalaSTTGenerator {
     }
 
     async transcribeAudio(audioBlob) {
+        switch (this.apiProvider) {
+            case 'openai':
+                return await this.transcribeWithOpenAI(audioBlob);
+            case 'gemini':
+                return await this.transcribeWithGemini(audioBlob);
+            case 'speechmatics':
+                return await this.transcribeWithSpeechmatics(audioBlob);
+            default:
+                throw new Error('Invalid API provider selected');
+        }
+    }
+
+    async transcribeWithOpenAI(audioBlob) {
         try {
             // Create FormData for the API request
             const formData = new FormData();
@@ -384,7 +427,165 @@ class SinhalaSTTGenerator {
         }
     }
 
+    async transcribeWithGemini(audioBlob) {
+        try {
+            // Convert audio blob to base64
+            const reader = new FileReader();
+            const base64Audio = await new Promise((resolve, reject) => {
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(audioBlob);
+            });
+
+            this.updateProcessingStatus('Sending audio to Google Gemini...');
+            this.updateProgress(50);
+            
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${this.apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [
+                            {
+                                inline_data: {
+                                    mime_type: audioBlob.type || 'audio/wav',
+                                    data: base64Audio
+                                }
+                            },
+                            {
+                                text: "Transcribe this audio file in English with timestamps. Return the transcription in a structured format with time segments."
+                            }
+                        ]
+                    }]
+                })
+            });
+
+            this.updateProgress(65);
+
+            if (!response.ok) {
+                throw new Error(`Gemini API error: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            const transcription = data.candidates[0]?.content?.parts[0]?.text || "No transcription available";
+            
+            // Parse the transcription into segments (simplified)
+            const segments = this.parseGeminiTranscription(transcription);
+            return segments;
+
+        } catch (error) {
+            console.error('Gemini transcription error:', error);
+            return [
+                { text: "Demo transcription - Gemini API unavailable", start: 0, end: 3 },
+                { text: "Please check your Gemini API configuration", start: 3, end: 6 }
+            ];
+        }
+    }
+
+    async transcribeWithSpeechmatics(audioBlob) {
+        try {
+            const formData = new FormData();
+            formData.append('data_file', audioBlob, 'audio.wav');
+            formData.append('config', JSON.stringify({
+                type: 'transcription',
+                transcription_config: {
+                    language: 'en',
+                    enable_partials: false,
+                    max_delay: 3
+                }
+            }));
+
+            this.updateProcessingStatus('Sending audio to Speechmatics...');
+            this.updateProgress(50);
+            
+            const response = await fetch('https://asr.api.speechmatics.com/v2/jobs', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.apiKey}`
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error(`Speechmatics API error: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            const jobId = data.id;
+            
+            // Poll for results
+            const result = await this.pollSpeechmaticsJob(jobId);
+            this.updateProgress(65);
+            
+            return result.results?.map(item => ({
+                text: item.alternatives[0].content,
+                start: item.start_time,
+                end: item.end_time
+            })) || [];
+
+        } catch (error) {
+            console.error('Speechmatics transcription error:', error);
+            return [
+                { text: "Demo transcription - Speechmatics API unavailable", start: 0, end: 3 },
+                { text: "Please check your Speechmatics API configuration", start: 3, end: 6 }
+            ];
+        }
+    }
+
+    async pollSpeechmaticsJob(jobId) {
+        const maxAttempts = 60;
+        let attempts = 0;
+        
+        while (attempts < maxAttempts) {
+            const response = await fetch(`https://asr.api.speechmatics.com/v2/jobs/${jobId}`, {
+                headers: {
+                    'Authorization': `Bearer ${this.apiKey}`
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.job.status === 'done') {
+                return data;
+            } else if (data.job.status === 'rejected') {
+                throw new Error('Speechmatics job rejected');
+            }
+            
+            await this.delay(2000);
+            attempts++;
+        }
+        
+        throw new Error('Speechmatics job timeout');
+    }
+
+    parseGeminiTranscription(text) {
+        // Simple parser - split by sentences and assign timestamps
+        const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+        const duration = 3; // seconds per segment
+        
+        return sentences.map((sentence, index) => ({
+            text: sentence.trim(),
+            start: index * duration,
+            end: (index + 1) * duration
+        }));
+    }
+
     async translateToSinhala(segments) {
+        switch (this.apiProvider) {
+            case 'openai':
+                return await this.translateWithOpenAI(segments);
+            case 'gemini':
+                return await this.translateWithGemini(segments);
+            case 'speechmatics':
+                return await this.translateWithGemini(segments); // Speechmatics doesn't have translation, use Gemini
+            default:
+                throw new Error('Invalid API provider selected');
+        }
+    }
+
+    async translateWithOpenAI(segments) {
         try {
             const textToTranslate = segments.map(segment => segment.text).join(' ');
             
@@ -445,6 +646,50 @@ class SinhalaSTTGenerator {
             }
             
             // Return demo Sinhala text based on English segments
+            return segments.map(segment => ({
+                text: this.getDemoSinhalaText(segment.text),
+                start: segment.start,
+                end: segment.end
+            }));
+        }
+    }
+
+    async translateWithGemini(segments) {
+        try {
+            const textToTranslate = segments.map(segment => segment.text).join(' ');
+            
+            this.updateProcessingStatus('Sending text to Gemini for translation...');
+            this.updateProgress(80);
+            
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${this.apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: `Translate the following English text to Sinhala. Provide only the translation without any explanations:\n\n${textToTranslate}`
+                        }]
+                    }]
+                })
+            });
+
+            this.updateProgress(90);
+
+            if (!response.ok) {
+                throw new Error(`Gemini translation failed: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            const translatedText = data.candidates[0]?.content?.parts[0]?.text || textToTranslate;
+            
+            // Split the translated text back into segments with original timing
+            const translatedSegments = this.splitTranslatedText(translatedText, segments);
+            return translatedSegments;
+
+        } catch (error) {
+            console.error('Gemini translation error:', error);
             return segments.map(segment => ({
                 text: this.getDemoSinhalaText(segment.text),
                 start: segment.start,
