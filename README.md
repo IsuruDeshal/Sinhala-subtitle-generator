@@ -8,12 +8,12 @@
 
 ## ✨ Features
 
-- **🤖 Multiple AI Providers**: Choose between OpenAI, Google Gemini, or Speechmatics
+- **🤖 Multiple AI Providers**: Choose between OpenAI, Google Gemini, Speechmatics, or LibreTranslate
 - **🌐 Two Versions Available**: Online (API-based) and Offline (Local processing)
 - **🎯 Dual Language Output**: Generates subtitles in both English and Sinhala
 - **📹 Multiple Formats**: Supports MP4, AVI, MOV, MKV, WebM
 - **🚀 Real-time Progress**: Beautiful progress tracking with time estimates
-- **💰 Flexible Options**: Choose the AI provider that fits your budget
+- **💰 Flexible Options**: Choose the AI provider that fits your budget - including FREE options!
 - **🔒 Privacy**: Choose between cloud processing or local processing
 
 ## 🤖 Supported AI Providers
@@ -22,12 +22,26 @@
 - ✅ High accuracy transcription
 - ✅ Excellent translation quality
 - ✅ Well-established API
-- 💰 Pay-per-use pricing
+- 💰 Pay-per-use pricing (~$0.10-0.30/hour)
 
 ### Google Gemini 2.5
 - ✅ Fast processing
 - ✅ Competitive pricing
 - ✅ Latest AI technology
+- 💰 FREE tier available
+
+### Speechmatics
+- ✅ Enterprise-grade accuracy
+- ✅ Real-time transcription support
+- ✅ Professional features
+- 💰 Subscription-based pricing
+
+### LibreTranslate ⭐ NEW
+- ✅ **100% FREE** - No API keys required
+- ✅ Open-source and privacy-focused
+- ✅ Self-hostable for unlimited use
+- ✅ No usage limits
+- 💰 **Completely FREE!**
 - 💰 Free tier available
 
 ### Speechmatics
@@ -41,9 +55,10 @@
 ### 🌐 Online Version (`index.html`)
 - **✅ Quick Setup**: Just open and use
 - **✅ No Installation**: Works directly in browser
-- **✅ Multi-Provider Support**: Use OpenAI, Gemini, or Speechmatics
+- **✅ Multi-Provider Support**: OpenAI, Gemini, Speechmatics, or LibreTranslate
+- **✅ FREE Option**: LibreTranslate requires no API key!
 - **✅ Flexible Costs**: Choose provider based on budget
-- **❌ API Key Required**: Need API key from your chosen provider
+- **❌ API Key Required**: For OpenAI, Gemini, and Speechmatics only
 
 ### 🏠 Offline Version (`index-offline.html`)
 - **✅ Completely Free**: No API costs after setup
@@ -54,16 +69,30 @@
 
 ## 🚀 Quick Start
 
-### Online Version (Instant Use)
+### Online Version - FREE Option (Recommended for Beginners!)
+
+#### Use LibreTranslate (100% FREE, No API Key Required!)
 1. Open `index.html` in your browser
-2. Select your AI provider (OpenAI, Gemini, or Speechmatics)
+2. Select **"LibreTranslate"** from the provider dropdown
+3. Choose a public server (e.g., libretranslate.com)
+4. Upload video and get subtitles - **Completely FREE!**
+
+📖 **Full Guide**: See [LIBRETRANSLATE_GUIDE.md](LIBRETRANSLATE_GUIDE.md) for setup instructions
+
+### Online Version - Premium Providers
+
+#### Use OpenAI, Gemini, or Speechmatics
+1. Open `index.html` in your browser
+2. Select your AI provider from the dropdown
 3. Enter your API key for the selected provider
 4. Upload video and get subtitles!
 
 **Getting API Keys:**
-- **OpenAI**: Get your key from [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
-- **Google Gemini**: Get your key from [ai.google.dev](https://ai.google.dev/)
-- **Speechmatics**: Get your key from [portal.speechmatics.com](https://portal.speechmatics.com/)
+- **OpenAI**: [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+- **Google Gemini**: [ai.google.dev](https://ai.google.dev/)
+- **Speechmatics**: [portal.speechmatics.com](https://portal.speechmatics.com/)
+
+📖 **Full Guide**: See [API_SETUP_GUIDE.md](API_SETUP_GUIDE.md) for detailed setup
 
 ### Offline Version (One-time Setup)
 1. **Install Python 3.8+** from [python.org](https://python.org)
